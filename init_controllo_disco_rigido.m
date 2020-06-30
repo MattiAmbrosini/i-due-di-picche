@@ -1,3 +1,7 @@
+clc
+clear
+close all
+
 %% INIZIALIZZO LE VARIABILI
 
 b = 0.002;
@@ -15,14 +19,3 @@ open_system(mdl)
 %% DEFINISCO IL MODELLO IN SPAZIO DI STATO ED IN FUNZIONE DI TRASFERIMENTO
 sys_ss = ss(A,B,C,D);
 sys_tf = tf(sys_ss);
-
-% %%
-% io(1) = linio('controllo_disco_rigido/u',1,'openinput');
-% io(2) = linio('controllo_disco_rigido/Integrator1',1,'openoutput');
-% 
-% % sys = ss('ControlloDisco/controllo_disco_rigido');
-% 
-% linsys_ss = linearize(mdl,io);
-% %%
-% bode(linsys_ss)
-% linsys_tf = tf(linsys_ss);
