@@ -14,8 +14,8 @@ C = [0, 1];
 D = 0;
 %% APRO IL MODELLO SIMULINK
 
-mdl = 'controllo_disco_rigido';
-open_system(mdl)
+op_mdl = 'controllo_disco_rigido_openloop';
+open_system(op_mdl)
 %% DEFINISCO IL MODELLO IN SPAZIO DI STATO ED IN FUNZIONE DI TRASFERIMENTO
 sys_ss = ss(A,B,C,D);
 sys_tf = tf(sys_ss);
