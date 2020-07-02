@@ -3,7 +3,6 @@ t = 0:0.01:10;
 [ys, ts] = step(sys_tf, t);
 
 MdlStep = sim(op_mdl);
-
 figure
 plot(MdlStep.tout, MdlStep.stepResponse)
 grid on
