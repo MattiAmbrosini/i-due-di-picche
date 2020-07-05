@@ -7,13 +7,13 @@ disp("Poli")
 disp(p)
 
 disp("Margini di guadagno e di fase del sistema")
-[Gm,Pm,Wcg,Wcp] = margin(sys_tf);
+[Gm,Pm,~,~] = margin(sys_tf);
 disp(Gm)
 disp(Pm)
 
-[m,ph,w] = bode(sys_tf);
-m = 20*log10(m);
-mag = m(:);
+% [m,ph,w] = bode(sys_tf);
+% m = 20*log10(m);
+% mag = m(:);
 
 figure
 bode(sys_tf);
