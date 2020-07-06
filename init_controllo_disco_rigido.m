@@ -24,6 +24,7 @@ open_system(cl_mdl)
 
 open p1_controllo_disco_rigido
 open p2_controllo_disco_rigido
+open controllo_disco_rigido
 
 %% DEFINISCO IL MODELLO IN SPAZIO DI STATO ED IN FUNZIONE DI TRASFERIMENTO
 sys_ss = ss(A,B,C,D);

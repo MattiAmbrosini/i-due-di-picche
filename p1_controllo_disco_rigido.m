@@ -32,9 +32,10 @@ ValoreFinale = limit(G,0)
 [m, ph, w] = bode(sys_tf);
 m = 20*log10(m);
 mag = m(:);
-[~,~,~,Wcp] = margin(sys_tf);
-disp(Wcp)
+% [~,~,~,Wcp] = margin(sys_tf);
+% disp(Wcp)
 
+disp("Stima della banda del sistema")
 bw = [w(1) 0];
 for i = 1:1:size(mag,1)
     if mag(i,1) < 0
@@ -45,3 +46,12 @@ end
 disp(bw)
 
 figure, semilogx(w(1:i), mag(1:i)), grid on
+title("Diagramma di Bode del modulo della funzione per la banda stimata")
+%% CALCOLO EQUILIBRIO E STABILITA'
+
+ubar = 1;
+xbar=-inv(A)*B*ubar;
+ybar=C*xbar+D*ubar;
+
+disp(xbar)
+disp(ybar)
