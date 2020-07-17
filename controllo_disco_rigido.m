@@ -237,13 +237,12 @@ figure, plot(tcl_n, ycl_n), grid on
 title("Risposta allo scalino - FdT anello chiuso")
 
 %% CALCOLO SOLUZIONE PER IL RITARDO PURO
-P_num = [1500 19600];
-P_den = 10^4*[1 2];
-P = tf(P_num, P_den);
+s = tf('s');
+ritardo = exp(-delay*s);
 disp("FdT d'anello con predittore di Smith")
-M = series(feedback(R_noise,P),sys_tf)
+M = series(series(feedback(R_noise,series(1-ritardo,sys_tf)),sys_tf),ritardo)
 
-bode(M), grid on
+figure, bode(feedback(M,1)), grid on
 figure, nyquist(feedback(M,1)), grid on
 
 %% VERIFICO IL COMPORTAMENTO FINALE DEL MODELLO
@@ -251,7 +250,7 @@ MdlFnl = sim(fn_mdl);
 figure, plot(MdlFnl.tout, MdlFnl.yd), grid on
 title("Risposta del modello in anello chiuso con ritardo")
 
-[yfl, tfl] = step(feedback(M,1), t);
+[yfl, tfl] = step(feedback(M,1),t);
 figure, plot(tfl, yfl), grid on
 title("Risposta allo scalino - FdT anello chiuso")
 
