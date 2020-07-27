@@ -30,7 +30,7 @@ sys_ss = ss(A,B,C,D);
 disp("Funzione di trasferimento del sistema")
 sys_tf = tf(sys_ss)
 
-%% CALCOLO EQUILIBRIO E STABILITA'
+%% CALCOLO POSIZIONE DI EQUILIBRIO
 ubar = 1;
 xbar=-inv(A)*B*ubar;
 ybar=C*xbar+D*ubar;
@@ -44,12 +44,15 @@ disp(ybar)
 %% RISPOSTA A SCALINO DEL SISTEMA
 t = 0:0.01:5;
 [ys, ts] = step(sys_tf, t);
+us = ones(size(ts));
 
 MdlStep = sim(mdl_A);
 figure, plot(MdlStep.tout, MdlStep.y), grid on
+hold on, plot(MdlStep.tout, MdlStep.u),legend('Uscita','Ingresso')
 title("Risposta allo scalino - Modello")
 
 figure, plot(ts, ys), grid on
+hold on, plot(ts, us),legend('Uscita','Ingresso')
 title("Risposta allo scalino - FdT")
 
 %% CALCOLO VALORI INIZIALE, FINALE E TEMPO DI ASSESTAMENTO
@@ -162,10 +165,13 @@ ztf(L)
 %% VERIFICO IL COMPORTAMENTO DEL SISTEMA IN ANELLO CHIUSO
 MdlCL = sim(mdl_1);
 figure, plot(MdlCL.tout, MdlCL.y), grid on
+hold on, plot(MdlCL.tout, MdlCL.u*ones(size(MdlCL.tout))), legend('Uscita','Ingresso')
 title("Risposta del modello in anello chiuso con disturbi")
 
 [ycl, tcl] = step(feedback(L,1), t);
+ucl = ones(size(tcl));
 figure, plot(tcl, ycl), grid on
+hold on, plot(tcl, ucl),legend('Uscita','Ingresso')
 title("Risposta allo scalino - FdT anello chiuso")
 
 %% CALCOLO SOLUZIONE PER IL RUMORE
@@ -192,7 +198,7 @@ semilogx(wL_n,magL_n)
 hold on
 semilogx(wc,0,'g*'),semilogx(wd,Ed, 'ko'),semilogx(wn,En, 'r>')
 ylabel('dB'),xlabel('pulsazione'),grid;
-title('Diagramma di Bode di L - Modulo')
+title('Diagramma di Bode di L noise - Modulo')
 
 disp("Margine di fase minimo richiesto")
 disp(PHm)
@@ -209,18 +215,23 @@ ztf(L_noise)
 %% VERIFICO IL COMPORTAMENTO DEL SISTEMA IN ANELLO CHIUSO
 Mdlcl = sim(mdl_2);
 figure, plot(Mdlcl.tout, Mdlcl.y), grid on
+hold on, plot(Mdlcl.tout, Mdlcl.u*ones(size(Mdlcl.tout))), legend('Uscita','Ingresso')
 title("Risposta del modello in anello chiuso con rumore")
 
 [ycl_n, tcl_n] = step(feedback(L_noise,1), t);
+ucl_n = ones(size(tcl_n));
 figure, plot(tcl_n, ycl_n), grid on
-title("Risposta allo scalino - FdT anello chiuso")
+hold on, plot(tcl_n, ucl_n),legend('Uscita','Ingresso')
+title("Risposta allo scalino - Rumore")
 
 %% CALCOLO SOLUZIONE PER IL RITARDO PURO
-L_delay = L_noise*ritardo;
+disp("FdT con ritardo")
+L_delay = L_noise*ritardo
 [y_r, t_r] = step(feedback(L_delay,1), t);
 figure, plot(t_r, y_r), grid on
 title("Effetto del ritardo")
 figure, nyquist(feedback(L_delay,1)),grid on
+title("Diagramma di Nyquist - L con ritardo")
 
 %predittore di Smith
 M = series(series(feedback(R_noise,series(1-ritardo,sys_tf)),sys_tf),ritardo);
@@ -241,14 +252,15 @@ ztf(N)
 %% VERIFICO IL COMPORTAMENTO FINALE DEL MODELLO
 MdlFnl = sim(mdl_3);
 figure, plot(MdlFnl.tout, MdlFnl.y_p), grid on
-hold on, plot(MdlFnl.tout, MdlFnl.y), legend ('Predittore Smith','Polo e k')
+hold on, plot(MdlFnl.tout, MdlFnl.y),plot(MdlFnl.tout, MdlFnl.u*ones(size(MdlFnl.tout))),legend ('Predittore Smith','Polo e k','Ingresso')
 title("Risposta del modello - Ritardo")
 
 [y_p, t_p] = step(feedback(M,1),t);
 [y_w, t_w] = step(feedback(N,1),t);
-figure, plot(t_p, y_p), grid on, hold on, plot(t_w, y_w)
+upw = ones(size(t_p));
+figure, plot(t_p, y_p), grid on, hold on, plot(t_w, y_w),plot(t_w, upw)
 title("Risposta allo scalino - Ritardo")
-legend ('Predittore Smith','Polo e k')
+legend ('Predittore Smith','Polo e k','Ingresso')
 
 %% APRO I MODELLI SIMULINK
 open_system(mdl_A),open_system(mdl_1),open_system(mdl_2),open_system(mdl_3)
